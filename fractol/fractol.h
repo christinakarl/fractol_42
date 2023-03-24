@@ -6,7 +6,7 @@
 /*   By: ckarl <ckarl@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 17:14:41 by ckarl             #+#    #+#             */
-/*   Updated: 2023/03/23 18:32:14 by ckarl            ###   ########.fr       */
+/*   Updated: 2023/03/24 17:46:42 by ckarl            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,6 @@ typedef struct	s_fractol
 
 } t_fract;
 
-//
 typedef struct s_getdata
 {
 	void	*img_ptr;
