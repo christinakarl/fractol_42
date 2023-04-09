@@ -6,7 +6,7 @@
 #    By: ckarl <ckarl@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/03/16 17:13:29 by ckarl             #+#    #+#              #
-#    Updated: 2023/03/23 18:30:40 by ckarl            ###   ########.fr        #
+#    Updated: 2023/04/08 23:48:50 by ckarl            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -54,8 +54,6 @@ clean:
 
 fclean:			clean
 				${RM} ${NAME}
-				cd mlx; make clean
-				cd libft; make fclean
 				@echo "$(COLOUR_VIO)All clear clear!$(COLOUR_END)"
 
 re:				fclean all
