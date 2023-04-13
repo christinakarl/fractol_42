@@ -6,7 +6,7 @@
 /*   By: ckarl <ckarl@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 17:14:41 by ckarl             #+#    #+#             */
-/*   Updated: 2023/04/09 12:37:46 by ckarl            ###   ########.fr       */
+/*   Updated: 2023/04/11 16:43:32 by ckarl            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,25 +21,27 @@
 # include <unistd.h>
 # include <fcntl.h>
 
-# define WIDTH 		1000
+# define WIDTH 		800
 # define HEIGHT		800
 # define MLXERROR	1
 
-typedef struct	s_fractol
-{
-	void	*ptr;
-	void	*window;
-
-} t_fract;
-
-typedef struct s_getdata
+typedef struct s_img
 {
 	void	*img_ptr;
 	char	*addr;
 	int		bits_per_pixel;
 	int		size_line;
 	int		endian;
-} t_getdata;
+} t_img;
+
+typedef struct	s_fractol
+{
+	void	*ptr;
+	void	*window;
+	t_img	img;
+	int		color;
+
+} t_fract;
 
 enum {
 	ON_KEYDOWN = 2,
@@ -64,5 +66,11 @@ enum {
 	ON_MINUS = 78,
 	ON_SPACE = 49,
 };
+
+int	ck_exit(t_fract *fract);
+int	ck_keyrelease(int keycode, t_fract *fract);
+int	ck_keypress(int keycode, t_fract *fract);
+int	ck_mousedown(int mousecode, t_fract *fract);
+int	ck_mousemove(int x, int y, t_fract *fract);
 
 #endif
