@@ -6,7 +6,7 @@
 /*   By: ckarl <ckarl@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 17:14:41 by ckarl             #+#    #+#             */
-/*   Updated: 2023/04/14 00:16:47 by ckarl            ###   ########.fr       */
+/*   Updated: 2023/04/14 15:31:42 by ckarl            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 # define FRACTOL_H
 
 # include "mlx/mlx.h"
-//# include "libft.h"
+# include "libft/libft.h"
 # include <math.h>
 # include <stdlib.h>
 # include <stdio.h>

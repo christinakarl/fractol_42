@@ -6,7 +6,7 @@
 /*   By: ckarl <ckarl@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 17:51:00 by ckarl             #+#    #+#             */
-/*   Updated: 2023/04/14 12:46:39 by ckarl            ###   ########.fr       */
+/*   Updated: 2023/04/14 15:44:13 by ckarl            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,32 @@ void	iteration_palette(t_fract *fract, unsigned int iter)
 		fract->color = 0x00010101 * iter;
 
 }
-/*algo: f(x) = z^2 + c; start with z.x & z.y = 0; need to calculate f(z) for each complex number c in the image*/
+
+/*algo: f(x) = z^2 + c; c is fixed, z has different initial values
+ * julia set does not diverge to infinity when iterated from complex nr z
+ * wide range of shapes, patterns*/
+int	julia(t_complex c, t_complex z)
+{
+	unsigned int	iter;
+	double			temp;
+
+	iter = 0;
+	temp = 0;
+	while ((z.r * z.r + z.i * z.i) < 4 && iter < 1000)
+	{
+		temp = z.r;
+		z.r = z.r * z.r - z.i * z.i + c.r;
+		z.i = 2 * temp * z.i + c.i;
+
+		iter++;
+	}
+	return (iter);
+}
+
+
+/*algo: f(x) = z^2 + c; start with z.x & z.y = 0; need to calculate f(z) for each complex number c in the image
+ * mandelbrot set does not diverge to infinity when iterated from z = 0
+ * self-similarity, bounded, characteristic shape*/
 int	mandelbrot(t_complex c)
 {
 	unsigned int	iter;
@@ -74,21 +99,18 @@ int	mandelbrot(t_complex c)
 
 		iter++;
 	}
-
 	return (iter);
 }
 
 /*x and y are used to calculate the corresponding value of c
 c.r = based on x, 'WIDTH / 2' is to center image horizontally, '4 / WIDTH' is to scale it to desired size, 4 so that fractal fills entire image area
 c.i = based on y, 'HEIGHT / 2' is to center image vertically, '4 / WIDTH' is to scale it to desired size, 4 so that fractal fills entire image area*/
-void	draw_fractal(t_fract *fract)
+void	draw_mandelbrot(t_fract *fract)
 {
-	double				x;
-	double				y;
-//	unsigned int	iter;
-	t_complex		c;
+	double		x;
+	double		y;
+	t_complex	c;
 
-	fract->color = 0x00010101;
 	y = 0;
 	while (y < HEIGHT)
 	{
@@ -97,8 +119,8 @@ void	draw_fractal(t_fract *fract)
 		 {	
 			c.r = (x - WIDTH / 2.0) * 4.0 / WIDTH;
 			c.i = (y - HEIGHT / 2.0) * 4.0 / WIDTH;
-		//	iteration_palette(fract, mandelbrot(c));
-			fract->color = mandelbrot(c) * 0x00010101;	
+			//iteration_palette(fract, mandelbrot(c));
+			fract->color = mandelbrot(c) * 0x000000FF;
 			upd_mlx_pixel_put(&fract->img, x, y, fract->color);
 			x++;
 		}
@@ -106,27 +128,67 @@ void	draw_fractal(t_fract *fract)
 	}
 }
 
-int	main(void)
+/*scaling z.i & z.r to the range [-1,5 , 1,5] = commonly used range for julia set*/
+void	draw_julia(t_fract *fract)
+{
+	double		x;
+	double		y;
+	t_complex	c;
+	t_complex	z;
+
+	y = 0;
+	c.r = -0.8;
+	c.i = 0.156;
+	while (y < HEIGHT)
+	{
+		x = 0;
+		while (x < WIDTH)
+		 {	
+			z.r = x / WIDTH * 3.0 - 1.5;
+			z.i = y / HEIGHT * 3.0 - 1.5;
+			//iteration_palette(fract, julia(c));
+			fract->color = julia(c, z) * 0x000000FF;
+			upd_mlx_pixel_put(&fract->img, x, y, fract->color);
+			x++;
+		}
+		y++;
+	}
+}
+
+void	choose_fractal(t_fract *fract, char *fractal_type)
+{
+	if (ft_strncmp(fractal_type, "mandelbrot", 10) == 0)
+		draw_mandelbrot(fract);
+	else if (ft_strncmp(fractal_type, "julia", 5) == 0)
+		draw_julia(fract);
+}
+
+int	main(int argc, char **argv)
 {
 	t_fract			fract;
 	float			x;
 	float			y;
+	char			*fractal_type;
 
 	x = 0;
 	y = 0;
 	fract.color = 0x000F00F0;
 
-/*initialize mlx*/
+	if (argc != 2 /*|| ft_strncmp(argv[1], "mandelbrot", 11) != 0 || ft_strncmp(argv[1], "julia", 6) != 0*/)
+	{
+		printf("please choose one of the following fractal types:\n- mandelbrot\n- julia\n");
+		return (0);
+	}
+	fractal_type = argv[1];
+
+/*initialize mlx --- CHECK LEAKS*/
 	fract.ptr = mlx_init();
 	if (fract.ptr == NULL)
 		return (MLXERROR);
-/*set up a window*/
+/*set up a window --- CHECK LEAKS*/
 	fract.window = mlx_new_window(fract.ptr, WIDTH, HEIGHT, "fractol");
 	if (fract.window == NULL)
-	{
-		free (fract.window);
 		return (MLXERROR);
-	}
 
 //set up an image;  returned pointer is starting point for memory area where image is stored; image can be > window in size
 	fract.img.img_ptr = mlx_new_image(fract.ptr, WIDTH, HEIGHT);
@@ -143,7 +205,7 @@ int	main(void)
 	mlx_hook(fract.window, ON_KEYUP, 0, ck_keyrelease, &fract);
 
 /*draw fractal with designated set*/
-	draw_fractal(&fract);
+	choose_fractal(&fract, fractal_type);
 	mlx_put_image_to_window(fract.ptr, fract.window, fract.img.img_ptr, 0, 0);
 
 	mlx_loop(fract.ptr);
