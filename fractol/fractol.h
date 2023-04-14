@@ -6,7 +6,7 @@
 /*   By: ckarl <ckarl@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 17:14:41 by ckarl             #+#    #+#             */
-/*   Updated: 2023/04/11 16:43:32 by ckarl            ###   ########.fr       */
+/*   Updated: 2023/04/14 00:16:47 by ckarl            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 # include <unistd.h>
 # include <fcntl.h>
 
-# define WIDTH 		800
+# define WIDTH 		1000
 # define HEIGHT		800
 # define MLXERROR	1
 
@@ -34,12 +34,19 @@ typedef struct s_img
 	int		endian;
 } t_img;
 
+/*r stands for real, i for imaginary*/
+typedef struct	s_complex
+{
+	double	r;
+	double	i;
+} t_complex;
+
 typedef struct	s_fractol
 {
-	void	*ptr;
-	void	*window;
-	t_img	img;
-	int		color;
+	void			*ptr;
+	void			*window;
+	t_img			img;
+	unsigned int	color;
 
 } t_fract;
 
