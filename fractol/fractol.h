@@ -6,7 +6,7 @@
 /*   By: ckarl <ckarl@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 17:14:41 by ckarl             #+#    #+#             */
-/*   Updated: 2023/04/14 15:31:42 by ckarl            ###   ########.fr       */
+/*   Updated: 2023/04/18 20:06:56 by ckarl            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 # define WIDTH 		1000
 # define HEIGHT		800
 # define MLXERROR	1
+# define MAX_ITER	500
 
 typedef struct s_img
 {
@@ -32,6 +33,7 @@ typedef struct s_img
 	int		bits_per_pixel;
 	int		size_line;
 	int		endian;
+
 } t_img;
 
 /*r stands for real, i for imaginary*/
@@ -43,10 +45,21 @@ typedef struct	s_complex
 
 typedef struct	s_fractol
 {
-	void			*ptr;
-	void			*window;
-	t_img			img;
-	unsigned int	color;
+	void		*ptr;
+	void		*window;
+	t_img		img;
+	char		*fractal_type;
+	int			color;
+	float		color_int;
+	t_complex	c;
+	t_complex	z;
+	double		x;
+	double		y;
+	double		mouse_x;
+	double		mouse_y;
+	double		hz_move;
+	double		vt_move;
+	double		zoom;
 
 } t_fract;
 
@@ -72,12 +85,22 @@ enum {
 	ON_PLUS = 69,
 	ON_MINUS = 78,
 	ON_SPACE = 49,
+	ON_RETURN = 36,
 };
 
-int	ck_exit(t_fract *fract);
-int	ck_keyrelease(int keycode, t_fract *fract);
-int	ck_keypress(int keycode, t_fract *fract);
-int	ck_mousedown(int mousecode, t_fract *fract);
-int	ck_mousemove(int x, int y, t_fract *fract);
+int		ck_exit(t_fract *fract);
+int		ck_keyrelease(int keycode, t_fract *fract);
+int		ck_keypress(int keycode, t_fract *fract);
+int		ck_mousedown(int mousecode, int x, int y, t_fract *fract);
+int		ck_mousemove(int x, int y, t_fract *fract);
+int		julia(t_fract *fract);
+int		mandelbrot(t_fract *fract);
+void	upd_mlx_pixel_put(t_img *img, int x, int y, unsigned int color);
+void	iteration_palette(t_fract *fract, unsigned int iter);
+void	draw_fractal(t_fract *fract);
+void	new_frame(t_fract *fract);
+int	get_trgb(int t, int r, int g, int b);
+
+void	render_background(t_fract *fract, unsigned int color);
 
 #endif

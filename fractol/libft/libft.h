@@ -6,7 +6,7 @@
 /*   By: ckarl <marvin@42lausanne.ch>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/27 15:08:25 by ckarl             #+#    #+#             */
-/*   Updated: 2022/10/27 16:49:52 by ckarl            ###   ########.fr       */
+/*   Updated: 2023/04/18 19:53:42 by ckarl            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include <unistd.h>
 # include <stdlib.h>
 # include <string.h>
+# include <stdarg.h>
 
 typedef struct s_list
 {
@@ -60,11 +61,27 @@ size_t	ft_strlcpy(char *dest, const char *src, size_t dstsize);
 size_t	ft_strlen(const char *str);
 char	*ft_strmapi(char const *s, char (*f)(unsigned int, char));
 int		ft_strncmp(const char *s1, const char *s2, size_t n);
+int		ft_strcmp(const char *s1, const char *s2);
 char	*ft_strnstr(const char *str, const char *to_find, size_t len);
 char	*ft_strrchr(const char *s, int c);
 char	**ft_split(char const *s, char c);
 char	*ft_substr(char const *s, unsigned int start, size_t len);
 int		ft_tolower(int c);
 int		ft_toupper(int c);
+//ft_printf functions
+int		print_decide(char const c, va_list args);
+int		ft_put_c(int i);
+char	*ft_itoa(int n);
+char	*ft_itoa_u(unsigned int n);
+int		ft_printf(const char *print, ...);
+int		ft_put_s(char *str);
+int		ft_put_nbr(int n);
+int		ft_xlen(unsigned int n);
+void	ft_nbr_hex(unsigned int n, char minmaj);
+int		ft_put_hex(unsigned int n, char minmaj);
+int		ft_ptrlen(unsigned long long n);
+void	ft_nbr_ptr(unsigned long long n);
+int		ft_put_ptr(unsigned long long n);
+int		ft_put_unsign(unsigned int n);
 
 #endif

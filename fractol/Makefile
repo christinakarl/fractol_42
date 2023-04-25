@@ -10,7 +10,7 @@
 #                                                                              #
 # **************************************************************************** #
 
-SRCS			= fractol.c utils.c main.c
+SRCS			= hooks.c main.c mandelbrot.c julia.c image.c
 
 OBJS			= ${SRCS:.c=.o}
 
