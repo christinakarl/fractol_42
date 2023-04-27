@@ -24,7 +24,7 @@
 # define WIDTH 		1000
 # define HEIGHT		800
 # define MLXERROR	1
-# define MAX_ITER	500
+# define MAX_ITER	1000
 
 typedef struct s_img
 {
@@ -43,6 +43,13 @@ typedef struct	s_complex
 	double	i;
 } t_complex;
 
+typedef struct	s_color
+{
+	int	r;
+	int	g;
+	int	b;
+} t_color;
+
 typedef struct	s_fractol
 {
 	void		*ptr;
@@ -60,7 +67,7 @@ typedef struct	s_fractol
 	double		hz_move;
 	double		vt_move;
 	double		zoom;
-
+	int			space;
 } t_fract;
 
 enum {
@@ -85,7 +92,9 @@ enum {
 	ON_PLUS = 69,
 	ON_MINUS = 78,
 	ON_SPACE = 49,
-	ON_RETURN = 36,
+	ON_ENTER = 36,
+	ON_B = 11,
+	ON_S = 1,
 };
 
 int		ck_exit(t_fract *fract);
@@ -99,7 +108,7 @@ void	upd_mlx_pixel_put(t_img *img, int x, int y, unsigned int color);
 void	iteration_palette(t_fract *fract, unsigned int iter);
 void	draw_fractal(t_fract *fract);
 void	new_frame(t_fract *fract);
-int	get_trgb(int t, int r, int g, int b);
+int		get_trgb(int t, int r, int g, int b);
 
 void	render_background(t_fract *fract, unsigned int color);
 

@@ -20,34 +20,35 @@ int	ck_exit(t_fract *fract)
 	return (0);
 }
 
-int	ck_keyrelease(int keycode, t_fract *fract)
-{
-	(void) fract;
-	(void) keycode;
-
-	ft_printf("a key was released\n");
-	return (0);
-}
-
 int	ck_keypress(int keycode, t_fract *fract)
 {
 	if (keycode == ON_ARROWRIGHT)
-		fract->hz_move += 50 * fract->zoom;
+		fract->hz_move += 50;
 	else if (keycode == ON_ARROWLEFT)
-		fract->hz_move -= 50 * fract->zoom;
+		fract->hz_move -= 50;
 	else if (keycode == ON_ARROWUP)
-		fract->vt_move -= 50 * fract->zoom;
+		fract->vt_move -= 50;
 	else if (keycode == ON_ARROWDOWN)
-		fract->vt_move += 50 * fract->zoom;
-	else if (keycode == ON_PLUS)
-		fract->zoom /= 1.8;
-	else if (keycode == ON_MINUS)
-		fract->zoom *= 1.8;
+		fract->vt_move += 50;
+	else if (keycode == ON_B)
+	{
+		fract->c.i *= (1.01 / fract->zoom); 		//find out how to change julia set when zoomed in or out
+		fract->c.r *= (1.01 / fract->zoom);
+	}
+	else if (keycode == ON_S)
+	{
+		fract->c.i /= (1.01 * fract->zoom);
+		fract->c.r /= (1.01 * fract->zoom);
+	}
 	else if (keycode == ON_ESC)
 	{
 		ft_printf("you exited the program\n");
 		ck_exit(fract);
 	}
+	else if (keycode == ON_SPACE)					//see if it works with multiplication, otherwise leave out
+		fract->space += 1;
+	else if (keycode == ON_ENTER)
+		fract->space = 1;
 	ft_printf("the key with keycode %d was pressed\n", keycode);
 	new_frame(fract);
 	return (0);
@@ -63,24 +64,28 @@ int	ck_mousedown(int mousecode, int x, int y, t_fract *fract)
 		//mlx_mouse_get_pos(fract->window, &(int)fract->mouse_x, &(int)fract->mouse_y);
 		fract->mouse_x = x;
 		fract->mouse_y = y;
-		ft_printf("%f\n", fract->mouse_x);
-		ft_printf("%f\n", fract->mouse_y);
+		// ft_printf("%f\n", fract->mouse_x);
+		// ft_printf("%f\n", fract->mouse_y);
 	}
 	else if (mousecode == 2)
 		ft_printf("mouse right\n");
 	else if (mousecode == ON_MOUSEDOWN)
 	{
 		fract->zoom *= 1.5;
-		// fract->c.i += 0.1;
-		// fract->c.r += 0.1;
-		ft_printf("mouse is zooming out\n");
+		fract->hz_move /= 1.5;
+		fract->vt_move /= 1.5;
+	//	fract->c.i /= 1.01;
+		// fract->c.r /= 1.01;
+		ft_printf("zooming out\n");
 	}
 	else if (mousecode == ON_MOUSEUP)
 	{
-		fract->zoom *= 0.5;
-		// fract->c.i -= 0.01;
-		// fract->c.r -= 0.01;
-		ft_printf("mouse is zooming in\n");
+		fract->zoom /= 1.5;
+		fract->hz_move *= 1.5;
+		fract->vt_move *= 1.5;
+		// fract->c.i *= 1.01;
+		// fract->c.r *= 1.01;
+		ft_printf("zooming in\n");
 	}
 
 	new_frame(fract);
@@ -91,17 +96,41 @@ int	ck_mousemove(int x, int y, t_fract *fract)
 {
 	(void) fract;
 
-	if (x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT)
+	if (x > 0 && x < WIDTH && y > 0 && y < HEIGHT)
 	{
 		fract->mouse_x = (double)x;
 		fract->mouse_y = (double)y;
 		//  mlx_mouse_get_pos(fract->window, &x, &y);
 		//  fract->mouse_x = (double)x;
 		//  fract->mouse_y = (double)y;
-		// fract->c.i *= 0.1;
-		// fract->c.r *= 0.1;
+		//  fract->c.i += 0.001;
+		//  fract->c.r += 0.001;
 
 	}
 		new_frame(fract);
 		return (0);
 }
+
+
+int	ck_keyrelease(int keycode, t_fract *fract)
+{
+	(void) fract;
+	(void) keycode;
+
+	ft_printf("a key was released\n");
+	return (0);
+}
+
+
+	// else if (keycode == ON_PLUS)
+	// {
+	// 	fract->zoom /= 1.8;
+	// 	fract->hz_move *= 1.8;
+	// 	fract->vt_move *= 1.8;
+	// }
+	// else if (keycode == ON_MINUS)
+	// {
+	// 	fract->zoom *= 1.8;
+	// 	fract->hz_move /= 1.8;
+	// 	fract->vt_move /= 1.8;
+	// }

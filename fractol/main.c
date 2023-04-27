@@ -16,7 +16,6 @@ void	new_frame(t_fract *fract)
 {
 		mlx_clear_window(fract->ptr, fract->window);
 		draw_fractal(fract);
-		//mlx_do_sync(fract->ptr);
 }
 
 /*julia:scaling z.i & z.r to the range [-1,5 , 1,5] = commonly used range for julia set
@@ -35,25 +34,25 @@ void	draw_fractal(t_fract *fract)
 		while (fract->x < WIDTH)
 		{	if (ft_strcmp(fract->fractal_type, "mandelbrot") == 0)
 			{
-				fract->c.r = ((fract->x + fract->hz_move)  - WIDTH / 2.0) * fract->zoom * 4.0 / WIDTH ;
-				fract->c.i = ((fract->y + fract->vt_move)  - HEIGHT / 2.0) * fract->zoom * 4.0 / WIDTH ;
+				fract->c.r = ((fract->x + fract->hz_move) - WIDTH / 2.0) * fract->zoom * 4.0 / WIDTH ;
+				fract->c.i = ((fract->y + fract->vt_move) - HEIGHT / 2.0) * fract->zoom * 4.0 / WIDTH ;
 				temp_x = fract->mouse_x;
 				temp_y = fract->mouse_y;
 
 				if (mandelbrot(fract) == -2)
-					fract->color = get_trgb(0, 0, 0, 0);
+					fract->color = 255 / MAX_ITER * 0x00000101;
 				else
 				{
-					// fract->color = mandelbrot(fract) * get_trgb(-100, 0, 150, 150);
+					//fract->color = mandelbrot(fract)  * get_trgb(0, 0, 50, 50) * 255 / MAX_ITER;
 					iteration_palette(fract, mandelbrot(fract));
 				}
 			}
 			else if (ft_strcmp(fract->fractal_type, "julia") == 0)
 			{
-				fract->z.r = (fract->x / WIDTH * 3.0 - 1.5) * fract->zoom;
-				fract->z.i = (fract->y / HEIGHT * 3.0 - 1.5) * fract->zoom;
-				//iteration_palette(fract, julia(c));
-				fract->color = julia(fract) * 0x00000101;
+				fract->z.r = ((fract->x + fract->hz_move) - WIDTH / 2.0) * fract->zoom * 4.0 / WIDTH ;
+				fract->z.i = ((fract->y + fract->vt_move) - HEIGHT / 2.0) * fract->zoom * 4.0 / WIDTH;
+				iteration_palette(fract, julia(fract));
+				//fract->color = julia(fract) * get_trgb(0, 0, 50, 50);
 			}
 			upd_mlx_pixel_put(&fract->img, fract->x, fract->y, fract->color);
 			fract->x++;
@@ -64,15 +63,22 @@ void	draw_fractal(t_fract *fract)
 	mlx_put_image_to_window(fract->ptr, fract->window, fract->img.img_ptr, 0, 0);
 }
 
-void	init_all(t_fract *fract)
+void	init_all(t_fract *fract, char **argv)
 {
-	fract->c.r = -0.9;
-	fract->c.i = 0.156;
-	fract->mouse_x = 0;
-	fract->mouse_y = 0;
+	/*initialize mlx --- CHECK LEAKS*/
+	fract->ptr = mlx_init();
+	/*set up a window --- CHECK LEAKS*/
+	fract->window = mlx_new_window(fract->ptr, WIDTH, HEIGHT, "fractol");
+	//set up an image;  returned pointer is starting point for memory area where image is stored; image can be > window in size
+	fract->img.img_ptr = mlx_new_image(fract->ptr, WIDTH, HEIGHT);
+	fract->img.addr = mlx_get_data_addr(fract->img.img_ptr, &fract->img.bits_per_pixel, &fract->img.size_line, &fract->img.endian);
+	fract->fractal_type = argv[1];
+	fract->c.r = -0.7269;
+	fract->c.i = 0.1889;
 	fract->hz_move = 1;
 	fract->vt_move = 1;
 	fract->zoom = 1;
+	fract->space = 1;
 }
 
 int	main(int argc, char **argv)
@@ -81,29 +87,21 @@ int	main(int argc, char **argv)
 
 	if (argc != 2 || (ft_strcmp(argv[1], "mandelbrot") != 0 && ft_strcmp(argv[1], "julia") != 0))
 	{
-		ft_printf("please choose one of the following fractal types:\n- mandelbrot\n- julia\n");
-		return (0);
-	}
-	fract.fractal_type = argv[1];
-
-/*initialize mlx --- CHECK LEAKS*/
-	fract.ptr = mlx_init();
-	if (fract.ptr == NULL)
+		ft_printf("please choose one of the following fractal types:\n- mandelbrot\n- julia + real part + imaginary part\n");
 		return (MLXERROR);
-/*set up a window --- CHECK LEAKS*/
-	fract.window = mlx_new_window(fract.ptr, WIDTH, HEIGHT, "fractol");
+	}
+	if (ft_strcmp(argv[1], "julia") == 0 && argc != 4)
+	{
+		//add parameters for julia to argv
+
+	}
+	init_all(&fract, argv);
 	if (fract.window == NULL)
 		return (MLXERROR);
-
-//set up an image;  returned pointer is starting point for memory area where image is stored; image can be > window in size
-	fract.img.img_ptr = mlx_new_image(fract.ptr, WIDTH, HEIGHT);
-	fract.img.addr = mlx_get_data_addr(fract.img.img_ptr, &fract.img.bits_per_pixel, &fract.img.size_line, &fract.img.endian);
-
-
+	if (fract.ptr == NULL)
+		return (MLXERROR);
 
 /*set up hooks; void mlx_hook(mlx_win_list_t *win_ptr, int x_event, int x_mask, int (*f)(), void *param)*/
-
-	init_all(&fract);
 
 	mlx_hook(fract.window, ON_KEYDOWN, 0, ck_keypress, &fract);
 	mlx_hook(fract.window, ON_MOUSEMOVE, 0, ck_mousemove, &fract);
@@ -114,21 +112,9 @@ int	main(int argc, char **argv)
 /*draw fractal with designated set*/
 
 	new_frame(&fract);
-
+	// mlx_string_put(fract.ptr, fract.window, 460, 355, 0x00000000,
+	// 	"Controls");
 	mlx_loop(fract.ptr);
 
 	return (0);
 }
-
-
-
-/*
-	while (1)
-	{
-		mlx_clear_window(fract.ptr, fract.window);
-		render_background(&fract, fract.color);
-		mlx_put_image_to_window(fract.ptr, fract.window, fract.img.img_ptr, 0, 0);
-		mlx_do_sync(fract.ptr);
-		fract.color -= 5;
-	}
-*/

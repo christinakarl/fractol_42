@@ -27,22 +27,25 @@ int	get_trgb(int t, int r, int g, int b)
 
 void	iteration_palette(t_fract *fract, unsigned int iter)
 {
-	if (iter >= 0 && iter <= 50)
-		fract->color = get_trgb(0, 204, 153, 255) * iter;
-	if (iter >= 51 && iter <= 100)
-		fract->color = get_trgb(0, 100, 100, 0) * iter;
-	else if (iter > 100 && iter <= 200)
-		fract->color = get_trgb(0, 10, 100, 80) * iter;
-	else if (iter > 200 && iter <= 300)
-		fract->color = get_trgb(0, 0, 128, 255) * iter;
-	else if (iter > 300 && iter <= 400)
-		fract->color = get_trgb(0, 150, 100, 250) * iter;
-	else if (iter > 400 && iter <= 500)
-		fract->color = get_trgb(0, 153, 153, 255) * iter;
-	else if (iter > 500 && iter < 1000)
-		fract->color = get_trgb(0, 150, 100, 200) * iter;
-	else if (iter == MAX_ITER)
-		fract->color = get_trgb(0, 0, 0, 0);
+	double	mult;
+	t_color	color;
+
+	color.r = 255 - fract->space;
+	color.g = 255 - fract->space;
+	color.b = 255 - fract->space;
+	mult = log(iter) / log(MAX_ITER);
+	if (iter == MAX_ITER)
+		fract->color = get_trgb(0, 0, 0, 0) ;
+	else if (iter >= 0 && iter < 4)
+		fract->color = get_trgb(0, 0.1 * color.r, (1 - mult) * color.g, mult * color.b);
+	else if (iter % 4 == 1)
+		fract->color = get_trgb(0, 0.2 * color.r, (1 - mult) * color.g, mult * color.b);
+	else if (iter % 4 == 2)
+		fract->color = get_trgb(0, 0.3 * color.r, (1 - mult) * color.g, mult * color.b);
+	else if (iter % 4 == 3)
+		fract->color = get_trgb(0, 0.4 * color.r, (1 - mult) * color.g, mult * color.b);
+	else
+		fract->color = get_trgb(0, 0.5 * color.r, (1 - mult) * color.g, mult * color.b);
 
 }
 

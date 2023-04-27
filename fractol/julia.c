@@ -22,7 +22,7 @@ int	julia(t_fract *fract)
 
 	iter = 0;
 	temp = 0;
-	while ((fract->z.r * fract->z.r + fract->z.i * fract->z.i) < 4 && iter < MAX_ITER)
+	while ((fract->z.r * fract->z.r + fract->z.i * fract->z.i) < 4 && iter <= MAX_ITER)
 	{
 		temp = fract->z.r;
 		fract->z.r = fract->z.r * fract->z.r - fract->z.i * fract->z.i + fract->c.r;
