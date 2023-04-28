@@ -30,23 +30,38 @@ int	ck_keypress(int keycode, t_fract *fract)
 		fract->vt_move -= 50;
 	else if (keycode == ON_ARROWDOWN)
 		fract->vt_move += 50;
-	else if (keycode == ON_B)
+	else if (keycode == ON_PLUS)
 	{
-		fract->c.i *= (1.01 / fract->zoom); 		//find out how to change julia set when zoomed in or out
-		fract->c.r *= (1.01 / fract->zoom);
+		// if (fract->c.r >= 2 || fract->c.r <= -2)
+		// 	fract->c.r /= (1.01);
+		// else if (fract->c.r < 2 && fract->c.r > -2)
+		// 	fract->c.r *= (1.01);
+		fract->c.i *= (1.01); 					//find out how to change julia set when zoomed in or out
+		fract->c.r /= (1.01);
 	}
-	else if (keycode == ON_S)
+	else if (keycode == ON_MINUS)
 	{
-		fract->c.i /= (1.01 * fract->zoom);
-		fract->c.r /= (1.01 * fract->zoom);
+		// if (fract->c.i >= 2 || fract->c.i <= -2)
+		// 	fract->c.i /= (1.01);
+		// else if (fract->c.i < 2 && fract->c.i > -2)
+		// 	fract->c.i *= (1.01);
+		fract->c.i /= (1.01);
+		fract->c.r *= (1.01);
 	}
 	else if (keycode == ON_ESC)
 	{
 		ft_printf("you exited the program\n");
 		ck_exit(fract);
 	}
-	else if (keycode == ON_SPACE)					//see if it works with multiplication, otherwise leave out
-		fract->space += 1;
+	else if (keycode == ON_SPACE)
+	{
+		if (fract->space == 1)						//see if it works with multiplication, otherwise leave out
+			fract->space = 2;
+		else if (fract->space == 2)
+			fract->space = 3;
+		else
+			fract->space = 1;
+	}
 	else if (keycode == ON_ENTER)
 		fract->space = 1;
 	ft_printf("the key with keycode %d was pressed\n", keycode);
@@ -74,8 +89,6 @@ int	ck_mousedown(int mousecode, int x, int y, t_fract *fract)
 		fract->zoom *= 1.5;
 		fract->hz_move /= 1.5;
 		fract->vt_move /= 1.5;
-	//	fract->c.i /= 1.01;
-		// fract->c.r /= 1.01;
 		ft_printf("zooming out\n");
 	}
 	else if (mousecode == ON_MOUSEUP)
@@ -83,11 +96,8 @@ int	ck_mousedown(int mousecode, int x, int y, t_fract *fract)
 		fract->zoom /= 1.5;
 		fract->hz_move *= 1.5;
 		fract->vt_move *= 1.5;
-		// fract->c.i *= 1.01;
-		// fract->c.r *= 1.01;
 		ft_printf("zooming in\n");
 	}
-
 	new_frame(fract);
 	return (0);
 }
@@ -110,27 +120,3 @@ int	ck_mousemove(int x, int y, t_fract *fract)
 		new_frame(fract);
 		return (0);
 }
-
-
-int	ck_keyrelease(int keycode, t_fract *fract)
-{
-	(void) fract;
-	(void) keycode;
-
-	ft_printf("a key was released\n");
-	return (0);
-}
-
-
-	// else if (keycode == ON_PLUS)
-	// {
-	// 	fract->zoom /= 1.8;
-	// 	fract->hz_move *= 1.8;
-	// 	fract->vt_move *= 1.8;
-	// }
-	// else if (keycode == ON_MINUS)
-	// {
-	// 	fract->zoom *= 1.8;
-	// 	fract->hz_move /= 1.8;
-	// 	fract->vt_move /= 1.8;
-	// }

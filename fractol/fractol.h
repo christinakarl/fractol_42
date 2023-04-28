@@ -24,7 +24,7 @@
 # define WIDTH 		1000
 # define HEIGHT		800
 # define MLXERROR	1
-# define MAX_ITER	1000
+# define MAX_ITER	500
 
 typedef struct s_img
 {
@@ -67,7 +67,7 @@ typedef struct	s_fractol
 	double		hz_move;
 	double		vt_move;
 	double		zoom;
-	int			space;
+	float		space;
 } t_fract;
 
 enum {

@@ -19,15 +19,22 @@ int	julia(t_fract *fract)
 {
 	unsigned int	iter;
 	double			temp;
+	double			zr_before;
+	double			zi_before;
 
 	iter = 0;
 	temp = 0;
+	zi_before = 0;
+	zr_before = 0;
 	while ((fract->z.r * fract->z.r + fract->z.i * fract->z.i) < 4 && iter <= MAX_ITER)
 	{
 		temp = fract->z.r;
 		fract->z.r = fract->z.r * fract->z.r - fract->z.i * fract->z.i + fract->c.r;
 		fract->z.i = 2 * temp * fract->z.i + fract->c.i;
-
+		// if (fract->z.r == zr_before || fract->z.i == zi_before)
+		// 	return (MAX_ITER);
+		zi_before = fract->z.i;
+		zr_before = fract->z.r;
 		iter++;
 	}
 	return (iter);

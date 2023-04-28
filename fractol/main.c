@@ -63,7 +63,26 @@ void	draw_fractal(t_fract *fract)
 	mlx_put_image_to_window(fract->ptr, fract->window, fract->img.img_ptr, 0, 0);
 }
 
-void	init_all(t_fract *fract, char **argv)
+void	init_julia(t_fract *fract, char c)
+{
+	if (c == '1')
+	{
+		fract->c.r = -0.8;
+		fract->c.i = 0.156;
+	}
+	else if (c == '2')
+	{
+		fract->c.r = -0.4;
+		fract->c.i = 0.6;
+	}
+	else if (c == '3')
+	{
+		fract->c.r = -0.7269;
+		fract->c.i = 0.1889;
+	}
+}
+
+void	init_all(t_fract *fract, char **argv, int argc)
 {
 	/*initialize mlx --- CHECK LEAKS*/
 	fract->ptr = mlx_init();
@@ -73,29 +92,29 @@ void	init_all(t_fract *fract, char **argv)
 	fract->img.img_ptr = mlx_new_image(fract->ptr, WIDTH, HEIGHT);
 	fract->img.addr = mlx_get_data_addr(fract->img.img_ptr, &fract->img.bits_per_pixel, &fract->img.size_line, &fract->img.endian);
 	fract->fractal_type = argv[1];
-	fract->c.r = -0.7269;
-	fract->c.i = 0.1889;
 	fract->hz_move = 1;
 	fract->vt_move = 1;
 	fract->zoom = 1;
 	fract->space = 1;
+	if (argc == 3)
+		init_julia(fract, argv[2][0]);
+	else
+	{
+		fract->c.r = 0.285 ;
+		fract->c.i = 0.01;
+	}
 }
 
 int	main(int argc, char **argv)
 {
 	t_fract		fract;
 
-	if (argc != 2 || (ft_strcmp(argv[1], "mandelbrot") != 0 && ft_strcmp(argv[1], "julia") != 0))
+	if (argc < 2 || argc > 3 || (ft_strcmp(argv[1], "mandelbrot") != 0 && ft_strcmp(argv[1], "julia") != 0))
 	{
-		ft_printf("please choose one of the following fractal types:\n- mandelbrot\n- julia + real part + imaginary part\n");
+		ft_printf("\nplease choose one of the following fractal types:\n\n- mandelbrot\n- julia (indicate 1, 2 or 3 for different fractals)\n\n");
 		return (MLXERROR);
 	}
-	if (ft_strcmp(argv[1], "julia") == 0 && argc != 4)
-	{
-		//add parameters for julia to argv
-
-	}
-	init_all(&fract, argv);
+	init_all(&fract, argv, argc);
 	if (fract.window == NULL)
 		return (MLXERROR);
 	if (fract.ptr == NULL)
@@ -107,14 +126,19 @@ int	main(int argc, char **argv)
 	mlx_hook(fract.window, ON_MOUSEMOVE, 0, ck_mousemove, &fract);
 	mlx_hook(fract.window, ON_MOUSEDOWN, 0, ck_mousedown, &fract);
 	mlx_hook(fract.window, ON_DESTROY, 0, ck_exit, &fract);
-	mlx_hook(fract.window, ON_KEYUP, 0, ck_keyrelease, &fract);
+	// mlx_hook(fract.window, ON_KEYUP, 0, ck_keyrelease, &fract);
 
 /*draw fractal with designated set*/
 
 	new_frame(&fract);
-	// mlx_string_put(fract.ptr, fract.window, 460, 355, 0x00000000,
-	// 	"Controls");
 	mlx_loop(fract.ptr);
+
+
+	mlx_string_put(fract.ptr, fract.window, WIDTH / 6, 100, 0x00111111, "Zoom: mouse wheel");
+	mlx_string_put(fract.ptr, fract.window, WIDTH / 6, 115, 0x00111111, "Shifting: arrow keys");
+	if (ft_strcmp(argv[1], "julia") == 0)
+		mlx_string_put(fract.ptr, fract.window, WIDTH / 6, 130, 0x00111111, "Julia fractal change: + / -");
+
 
 	return (0);
 }
