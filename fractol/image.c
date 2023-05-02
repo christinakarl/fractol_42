@@ -25,7 +25,7 @@ int	get_trgb(int t, int r, int g, int b)
 	return (t << 24 | r << 16 | g << 8 | b);
 }
 
-void	iteration_palette(t_fract *fract, unsigned int iter)			//check again if colors are showing correctly
+void	iteration_palette(t_fract *fract, unsigned int iter)
 {
 	double	mult;
 	t_color	color;
@@ -37,26 +37,28 @@ void	iteration_palette(t_fract *fract, unsigned int iter)			//check again if col
 	mult = log(iter) / log(MAX_ITER);
 	if (fract->space == 1)
 	{
-		color.g = 20;
-		coef = 0.1;
+		color.r = 150;
+		color.g = 150;
+		coef = 0.8;
 	}
 	else if (fract->space == 2)
-		coef = 0.6;
-	else if (fract->space == 3)
 	{
-		color.g = 100;
-		coef = 0.9;
+		color.g = 200;
+		color.r = 150;
+		coef = 0.4;
 	}
+	else if (fract->space == 3)
+		coef = 0.6;
 	if (iter == MAX_ITER)
-		fract->color = get_trgb(0, 0, 0, 0) ;
+		fract->color = get_trgb(0, 0, 0, 0);
 	else if (iter >= 0 && iter < 3)
-		fract->color = get_trgb(0, (coef * 0.3) * color.r, (1 - mult) * color.g, (mult * (1 - coef)) * color.b);
+		fract->color = get_trgb(0, (coef) * color.r, (1 - mult) * color.g, (mult) * color.b);
 	else if (iter % 3 == 1)
-		fract->color = get_trgb(0, (coef * 0.4) * color.r, (1 - mult) * color.g, (mult * (1 - coef)) * color.b);
+		fract->color = get_trgb(0, (coef + 0.01) * color.r, (1 - mult) * color.g, (mult) * color.b);
 	else if (iter % 3 == 2)
-		fract->color = get_trgb(0, (coef * 0.5) * color.r, (1 - mult) * color.g, (mult * (1 - coef)) * color.b);
+		fract->color = get_trgb(0, (coef + 0.03) * color.r, (1 - mult) * color.g, (mult) * color.b);
 	else if (iter % 3 == 3)
-		fract->color = get_trgb(0, (coef * 0.6) * color.r, (1 - mult) * color.g, (mult * (1 - coef)) * color.b);
+		fract->color = get_trgb(0, (coef + 0.06) * color.r, (1 - mult) * color.g, (mult) * color.b);
 	else
-		fract->color = get_trgb(0, (coef * 0.7) * color.r, (1 - mult) * color.g, (mult * (1 - coef)) * color.b);
+		fract->color = get_trgb(0, (coef + 0.09) * color.r, (1 - mult) * color.g, (mult) * color.b);
 }
