@@ -10,7 +10,7 @@
 #                                                                              #
 # **************************************************************************** #
 
-SRCS			= hooks.c main.c mandelbrot.c julia.c image.c
+SRCS			= main.c hooks.c mandelbrot.c julia.c image.c
 
 OBJS			= ${SRCS:.c=.o}
 
@@ -24,7 +24,7 @@ NAME			= fractol
 
 CC				= gcc
 
-CFLAGS			= -Wall -Wextra -Werror -g -fsanitize=address
+CFLAGS			= -Wall -Wextra -Werror -g
 
 RM				= rm -f
 
@@ -50,10 +50,13 @@ ${NAME}:		${OBJS}
 
 clean:
 				${RM} ${OBJS}
+				cd mlx; make clean
+				cd libft; make clean
 				@echo "$(COLOUR_GREEN)All clear!$(COLOUR_END)"
 
 fclean:			clean
 				${RM} ${NAME}
+				cd libft; make fclean
 				@echo "$(COLOUR_VIO)All clear clear!$(COLOUR_END)"
 
 re:				fclean all

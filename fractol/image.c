@@ -17,7 +17,7 @@ void	upd_mlx_pixel_put(t_img *img, int x, int y, unsigned int color)
 	char	*dst;
 
 	dst = img->addr + (y * img->size_line + x * (img->bits_per_pixel / 8));
-	*(unsigned int*)dst = color;
+	*(unsigned int *)dst = color;
 }
 
 int	get_trgb(int t, int r, int g, int b)
@@ -25,40 +25,55 @@ int	get_trgb(int t, int r, int g, int b)
 	return (t << 24 | r << 16 | g << 8 | b);
 }
 
+//create a new image
+void	new_frame(t_fract *fract)
+{
+	mlx_clear_window(fract->ptr, fract->window);
+	if (ft_strcmp(fract->fractal_type, "mandelbrot") == 0)
+		draw_mandelbrot(fract);
+	else if (ft_strcmp(fract->fractal_type, "julia") == 0)
+		draw_julia(fract);
+	mlx_put_image_to_window(fract->ptr, fract->window, \
+	fract->img.img_ptr, 0, 0);
+}
+
+//change color coefficent when space button is pressed
+void	change_colors(double *coef, t_fract *fract)
+{
+	if (fract->space == 1)
+		*coef = 0.38;
+	else if (fract->space == 2)
+		*coef = 0.59;
+	else if (fract->space == 3)
+		*coef = 0.2;
+}
+
+//color pixels according to iteration result
 void	iteration_palette(t_fract *fract, unsigned int iter)
 {
 	double	mult;
-	t_color	color;
 	double	coef;
 
-	color.r = 255;
-	color.g = 255;
-	color.b = 255;
 	mult = log(iter) / log(MAX_ITER);
-	if (fract->space == 1)
-	{
-		color.r = 150;
-		color.g = 150;
-		coef = 0.8;
-	}
-	else if (fract->space == 2)
-	{
-		color.g = 200;
-		color.r = 150;
-		coef = 0.4;
-	}
-	else if (fract->space == 3)
-		coef = 0.6;
+	change_colors(&coef, fract);
 	if (iter == MAX_ITER)
-		fract->color = get_trgb(0, 0, 0, 0);
-	else if (iter >= 0 && iter < 3)
-		fract->color = get_trgb(0, (coef) * color.r, (1 - mult) * color.g, (mult) * color.b);
-	else if (iter % 3 == 1)
-		fract->color = get_trgb(0, (coef + 0.01) * color.r, (1 - mult) * color.g, (mult) * color.b);
-	else if (iter % 3 == 2)
-		fract->color = get_trgb(0, (coef + 0.03) * color.r, (1 - mult) * color.g, (mult) * color.b);
-	else if (iter % 3 == 3)
-		fract->color = get_trgb(0, (coef + 0.06) * color.r, (1 - mult) * color.g, (mult) * color.b);
+		fract->color = get_trgb(0, coef * 255, (mult / coef) * 255, mult * 255);
+	else if (iter >= 0 && iter < 4)
+		fract->color = get_trgb(0, (0.04 + coef) * 255, \
+		(mult / coef) * 255, (mult) * 255);
+	else if (iter % 4 == 1)
+		fract->color = get_trgb(0, (0.08 + coef) * 255, \
+		(mult / coef) * 255, (mult) * 255);
+	else if (iter % 4 == 2)
+		fract->color = get_trgb(0, (0.07 + coef) * 255, \
+		(mult / coef) * 255, (mult) * 255);
+	else if (iter % 4 == 3)
+		fract->color = get_trgb(0, (0.06 + coef) * 255, \
+		(mult / coef) * 255, (mult) * 255);
+	else if (iter % 4 == 4)
+		fract->color = get_trgb(0, (0.05 + coef) * 255, \
+		(mult / coef) * 255, (mult) * 255);
 	else
-		fract->color = get_trgb(0, (coef + 0.09) * color.r, (1 - mult) * color.g, (mult) * color.b);
+		fract->color = get_trgb(0, (0.09 + coef) * 255, \
+		(mult / coef) * 255, (mult) * 255);
 }
